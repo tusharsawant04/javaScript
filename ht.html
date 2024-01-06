@@ -87,9 +87,15 @@ let users = getUserLocalStorage();
          editButton.className = 'btn btn-primary m-2';
          editButton.textContent = 'Edit';
          editButton.onclick = function() {
-        get(users.id); 
-        index(); 
-         };
+           editUser(users.id); 
+           const saveButton = document.getElementsByClassName('btn-primary');
+         if (saveButton) {
+          saveButton.onclick = function() {
+            updateUser(users.id);
+          };
+    }
+    index();
+};
 
          idcell.textContent=users.id;
         namecell.textContent=users.name;
@@ -102,8 +108,13 @@ let users = getUserLocalStorage();
 
 
     }
+
+
+
+
 function store() {
   
+
     console.log('store function called'); // Debugging statement
     let name = document.getElementById('name').value;
     let email = document.getElementById('email').value;
@@ -113,38 +124,33 @@ function store() {
     users.push(newUser);
     saveUserInLocalStorage();
     console.log('Stored user:', newUser); // Debugging statement
-    return newUser;
-    // let name=document.getElementById('name').value;
-    // let email=document.getElementById('email').value;
-    // let id=users.length+1;
-    // console.log(id);
-    //     const newUser={id,name,email};
-    // users.push(newUser);
-    // saveUserInLocalStorage();
-    // console.log(id,name,email);
-    // return newUser;   
-    
+    return newUser;   
 }
 
 function get(id){
     return users.find(users=>users.id==id)
-
-}
-function getAll(){
-    return users;
 }
 
-function update(id,updateData){
-
-    const userIndex=users.findIndex(users=>users.id===id);
-    if(userIndex!==-1){
-        users[userIndex]={...users[userIndex], ...updatedData};
-        saveUserInLocalStorage();
-        return userIndex;
+function editUser(id) {
+    const user = users.find(user => user.id === id);
+    if (user) {
+        document.getElementById('name').value = user.name;
+        document.getElementById('email').value = user.email;
     }
-    return null;
-
 }
+
+function updateUser(id) {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const updatedData = { name, email };
+    if (update(id, updatedData)) { // Call update function and check its return value
+        index(); // Refresh the table
+    } else {
+        console.error('User not found'); // Log an error if the user was not found
+    }
+}
+
+
 
 function deleteUser(id){
     const userIndex=users.findIndex(users=>users.id===id);
@@ -160,10 +166,6 @@ function deletedAllUser() {
     localStorage.removeItem('users');
 }
 
-
-// store("tushar","aryan@gmail.com");
-// store("aryan","ts@gmial.com");
-console.log(getAll());
 
 
     index();
